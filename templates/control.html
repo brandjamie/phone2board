@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Control Page</title>
+   <link rel="stylesheet" type="text/css" href="{{ static_url("gameshow.css")}}" /> 
+
+<script src="{{static_url("jquery-1.11.0.min.js")}}" type ="text/javascript"></script>
+
+<script src="{{static_url("jquery-migrate-1.2.1.min.js")}}" type ="text/javascript"></script>
+
+<script src="{{static_url("gameshow.js")}}" type ="text/javascript"></script>
+
+<script type="text/javascript">
+{% autoescape None %}
+$(document).ready(function() {
+  makecontroltable(teamsarray);
+  setTimeout(requestUpdate, 100); 
+
+  } );
+
+
+ var teamsarray ={{ teams  }};
+ var status = "{{ status }}";
+ var updatefunc = updateControl;
+ var updatepage = "/controlstatus";
+var questionnum = 0;
+
+var quiztype = {{ quiz_type }};
+
+var questionarray = {{ question_array }};
+
+var answerarray = {{ answer_array }};
+
+
+
+
+
+
+
+
+
+// ---------------------------------------functions for sending messages
+
+
+function sendanswer (answerform) {
+var answer = answerform.answer.value;
+answer = encodeURIComponent(answer);
+sendmessage("type=controlanswer&answer="+answer,"/controlmessage");
+}
+
+function setanswer (answer) {
+document.getElementById('answerform').reset();
+document.getElementById('answertext').defaultValue = answer;
+
+}
+
+
+
+
+function sendquestion (questionform) {
+var question = questionform.question.value;
+question = encodeURIComponent(question);
+sendmessage("type=question&question="+question,"/controlmessage");
+clearcontrolanswers ()
+}
+
+
+function sendq (question) {
+question = encodeURIComponent(question);
+sendmessage("type=question&question="+question,"/controlmessage");
+clearcontrolanswers ();
+
+
+}
+
+
+function sendnextquestion () {
+if (questionnum < questionarray.length) {
+setanswer (answerarray[questionnum]); 
+sendq (questionarray[questionnum]);
+questionnum = questionnum+1;
+}
+else 
+{
+sendq ("no more questions");
+}
+
+}
+
+function opencloselogin () {
+sendmessage("type=toggleloginstatus","/controlmessage");
+}
+
+function openclosestatus () {
+sendmessage("type=togglestatus","/controlmessage");}
+
+
+
+
+
+
+function rename (i) {
+window.alert("renaming no "+i);
+
+}
+
+function markcorrect (i) {
+var name = getusernamefromindex(i);
+sendmessage("type=markcorrect&id="+name,"/controlmessage");
+}
+
+
+function markincorrect (i) {
+var name = getusernamefromindex(i);
+sendmessage("type=markincorrect&id="+name,"/controlmessage");
+}
+
+function block (i) {
+var name = getusernamefromindex(i);
+sendmessage("type=block&id="+name,"/controlmessage");
+document.getElementById("score"+i).innerHTML="true";
+}
+
+function unblock (i) {
+var name = getusernamefromindex(i);
+sendmessage("type=unblock&id="+name,"/controlmessage");
+document.getElementById("score"+i).innerHTML="false";
+}
+
+
+
+
+// -----------------------------------functions for recieving updates
+
+		
+function updateControl(resultJson) {
+// window.alert("updates");
+      if (resultJson.type=="answers"){
+// window.alert(resultJson.status);
+
+teamsarray = resultJson.answers;
+
+	makecontroltable(resultJson.answers); 
+}
+ if (resultJson.type=="question") {
+// window.alert(resultJson.loginstatus);
+// nothing to do yet - maybe alert that the question is asked and status has changed
+setLoginStatus (resultJson.loginstatus);
+setStatus (resultJson.status);
+
+}
+
+ if (resultJson.type=="loginstatus") {
+// window.alert(resultJson.loginstatus);
+
+setLoginStatus (resultJson.loginstatus);
+
+}
+ if (resultJson.type=="status") {
+// window.alert(resultJson.loginstatus);
+
+setStatus (resultJson.status);
+
+}
+
+
+
+  }
+
+// ---------------------------------------------fucntions for page
+
+function setLoginStatus (status) {
+//window.alert(status);
+
+   document.getElementById("loginstatus").innerHTML=status;
+
+
+}
+function setStatus (status) {
+//window.alert(status);
+
+   document.getElementById("status").innerHTML=status;
+
+
+}
+
+
+function getusernamefromindex (id) {
+var name = encodeURIComponent(teamsarray[id][0]);
+return name;
+}
+
+
+
+
+
+
+
+
+
+function makecontroltable (team) {
+
+    var titles = ["Teams","Block","Answer","Mark","Blocked"];
+    var teamnames = new Array;
+    var block = new Array;
+    var answer = new Array;
+    var mark = new Array;
+    var score = new Array;   
+    for (i=0;i<team.length;i++)
+    {
+	teamnames.push(team[i][0]);
+     	block.push("<div class='cell' id='block"+i+"'><a id='block"+i+"' href='javascript:block("+i+");'>Block</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a id='unblock"+i+"'  href='javascript:unblock("+i+");'>unblock</a></div>");
+    	answer.push("<div class='cell' id='answer"+i+"'>"+team[i][1] +"</div>");
+   
+
+
+  	mark.push("<div class='cell' id='mark"+i+"'><a id='correct"+i+"' href='javascript:markcorrect("+i+");'>yes</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a id='wrong"+i+"'  href='javascript:markincorrect("+i+");'>no</a></div>");
+     	score.push("<div class='cell' id='score"+i+"'>"+team[i][4]+"</div>");
+    }
+    var tablehtml = maketable(titles,teamnames,block,answer,mark,score);
+    
+
+    if (tablehtml=="") {
+    	tablehtml="No teams connected";
+    }
+    document.getElementById('GameshowTable').innerHTML=tablehtml;
+
+}
+
+
+
+
+function clearcontrolanswers () {
+var numofteams = document.getElementById('GameshowTable').getElementsByTagName("tr").length;
+
+for (i = 0; i<(numofteams-1); i++)       {
+document.getElementById('answer'+i).innerHTML="noanswer";
+
+
+}
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+
+
+
+</head>
+<body>
+<div id="title" class="title">
+ This is the Control Page
+ </div>
+
+
+<div id="teams" class="box">
+<div id="GameshowTable" class="GameshowTable">
+
+</div>
+
+
+</div>
+
+
+
+<div id="askquestion" class="box">
+<form action="#" onsubmit="sendquestion(this); return false">
+  Ask question: <input type="text" name="question" />
+<input type="submit" value="Send Question" />
+</form>
+</div>
+
+<div id="sendanswer" class="box">
+<form action="#" onsubmit="sendanswer(this); return false" id="answerform">
+  Send Answer: <input type="text" id="answertext" name="answer" />
+<input type="submit" value="Send Answer" />
+</form>
+</div>
+
+
+<div id="asknextquestion" class="box">
+<form action="#" onsubmit="sendnextquestion(this); return false">
+Ask Next Question
+<input type="submit" value="Send Question" />
+</form>
+</div>
+
+
+
+<div id="changeloginstatus" class="box">
+<div id="loginstatus">
+{{ loginstatus }}
+
+</div>
+<form action="#" onsubmit="opencloselogin(this); return false">
+<input type="submit" value="Open/Close Login" />
+</form>
+</div>
+
+<div id="changestatus" class="box">
+<div id="status">
+{{ status }}
+
+</div>
+<form action="#" onsubmit="openclosestatus(this); return false">
+<input type="submit" value="Change Status" />
+</form>
+</div>
+
+
+</body>
+</html>

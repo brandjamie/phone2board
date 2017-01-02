@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width" />
+
+  <link rel="stylesheet" type="text/css" href="{{ static_url("gameshow.css")}}" /> 
+
+
+
+<script src="{{static_url("jquery-1.11.0.min.js")}}" type ="text/javascript"></script>
+<script src="{{static_url("gameshow.js")}}"x type ="text/javascript"></script>
+<script src="{{static_url("velocity.js")}}"x type ="text/javascript"></script>
+<script src="{{static_url("countuncountnouns.js")}}"x type ="text/javascript"></script>
+
+<script type="text/javascript">
+  {% autoescape None %}
+
+  $(document).ready(function() {
+ 
+  init();
+  });
+
+
+  var countArray;
+  var uncountArray;
+
+  // number of simulatious words of each type. 
+  var numOfCountNouns = 10;
+  var numOfUncountNouns = 10;
+
+  var wordnum = 0;
+
+
+  function init () {
+  countArray = new RandomArray(countNouns);
+  uncountArray = new RandomArray(uncountNouns);
+  for (var i = 0; i<numOfCountNouns; i++) {
+				     var thisword = countArray.splicearr();
+				       addWord(thisword,"count");
+				     }
+ for (var i = 0; i<numOfUncountNouns; i++) {
+  var thisword = uncountArray.splicearr();
+ addWord(thisword,"uncount");
+				  }
+}
+
+
+
+
+
+
+
+
+//////////////////////// randomarray object ///////////////////////////////////
+///////    takes an array as a creation argument ////////////////
+///////// object.splicearr sorts randomly through the array ////////////
+////////// if object.true is true, it will loop, alternatively it will 
+////////// stop looping after each member of the array has been given. 
+////////// object.endmessage is the final message if loop is false. 
+
+function RandomArray (thisarray) {
+this.fullarray = thisarray;
+this.temparray = thisarray.slice(0);
+this.len = this.fullarray.length;
+this.loop = true;
+this.splicearr = function () {
+this.len = this.fullarray.length;
+if (this.len < 1 && this.loop == true) 
+{
+this.fullarray = this.temparray.slice(0);
+this.len = this.fullarray.length;
+}
+if (this.len < 1) {
+choice = this.endmessage;
+} 
+else {
+node = Math.floor(Math.random()*this.len);
+choice = this.fullarray.splice(node,1);
+}
+return choice;
+};
+this.test = function () {
+};
+this.endmessage = "out of choices";
+}
+
+
+////////////////////////////////////////////////////////////////////////
+
+
+	       function addWord (wordString,myclass) {
+	       
+	       divId = makeDiv(wordString,wordString,myclass);
+
+	       //divId = "#"+encodeURI(wordString);
+	       var textmin = 2;
+	       var textmax = 7;
+	       var randomno =Math.random()*(textmax-textmin);
+	       
+	       var fsize = textmin+randomno;
+	       var newfsize = fsize.toString()+"em";
+	       
+	       $(divId).css({fontSize:newfsize});
+	       $(divId).css({position:'fixed'});
+	       var pos = makeNewPosition(divId);
+	       $(divId).css({top:pos[0]});
+	       $(divId).css({left:pos[1]});
+	       $(divId).click(function() {
+	       clickexplodeWord(this); 
+	       
+	        }); 
+    animateDiv(divId);
+	       }
+
+	       // will eventually take a string instead of the div (from gameserver)
+	       // will also take a string for the sender
+
+	       function clickexplodeWord(thisdiv) {
+	       var client = "jb1 +200";
+	       var thisid = $(thisdiv).attr('id');
+
+
+
+	       
+explodeWord(thisid,client);
+
+	       }
+
+	       
+	       function explodeWord(thisdivid,client) {
+thisdiv = "#"+thisdivid;
+
+iscorrect = isCorrect($(thisdiv));
+      
+explodeText($(thisdiv),client,iscorrect);	       
+	       }
+
+
+
+
+	       
+
+	       function isCorrect(thisdiv) {
+	       var result = false;
+	       var thisclass = $(thisdiv).attr('class');
+	       if ($(thisdiv).attr('class')=="uncount") {
+	       result = true;
+	       }
+	       
+	       
+return result;
+
+
+	       }
+
+	       function sanitizeText (text) {
+               newtext = text+"";
+	       thirdtext = newtext.replace(/ /g,'');
+	       return thirdtext;
+	       }
+
+
+   function correctAnim(text,position) {
+	       thisId = makeDiv(text,text,"correctanim");
+       	       var maxfontsize = "10em";
+	       var mainfontsize = "6em";
+	       var offset = 200;
+    $(thisId).css({position: "fixed",
+      opacity: 1,
+	       fontSize: 0,
+	       color: "green",
+      top: position.top,
+      left: position.left,
+    }).animate({
+      fontSize: maxfontsize,
+	       top: position.top-offset,
+    	       },1000).animate({
+    	       fontSize:mainfontsize,
+    	      opacity:0,
+    	       },1000,function () { this.remove(); });
+	       	       				     var thisword = uncountArray.splicearr();
+	       
+				     addWord(thisword,"uncount");
+
+	       }
+
+	       
+   function incorrectAnim(text,position) {
+	       thisId = makeDiv(text,text,"correctanim");
+       	       var maxfontsize = "10em";
+	       var mainfontsize = "6em";
+	       var offset = 200;
+    $(thisId).css({position: "fixed",
+      opacity: 1,
+	       fontSize: 0,
+	       color: "red",
+      top: position.top,
+      left: position.left,
+    }).animate({
+      fontSize: maxfontsize,
+	       top: position.top+offset,
+    	       },1000).animate({
+    	       fontSize:mainfontsize,
+    	      opacity:0,
+    	       },1000,function () { this.remove(); });
+
+
+	       				     var thisword = countArray.splicearr();
+				     addWord(thisword,"count");
+
+	       }
+
+	       
+
+
+	       
+	       //client is a string of the shooters name + score
+	       // correct is a bool 
+function explodeText(o,client,correct) {
+  var $o = $(o);
+	       $o.stop();
+	       var position = $o.offset();
+
+if (correct == true) {
+ correctAnim(client,position); 
+	       } else {
+incorrectAnim(client,position); 
+
+	       }
+
+
+
+
+
+
+
+	       
+  $o.html($o.text().replace(/([\S])/g, "<span>$1</span>"));
+  $o.css("position", "relative");
+  $("span", $o).each(function(i) {
+    var newTop = Math.floor(Math.random()*500)*((i%2)?1:-1);
+    var newLeft = Math.floor(Math.random()*500)*((i%2)?1:-1);
+	       var fsize = $(this).css('font-size');
+	       var newfsize = fsize*7;
+    $(this).css({position: "relative",
+      opacity: 1,
+      fontSize: fsize,
+      top: 0,
+      left: 0
+    }).animate({
+      opacity: 0,
+      fontSize: newfsize,
+      top: newTop,
+      left:newLeft
+    },1000, function () { this.remove(); });
+  });
+}
+
+	       
+function makeNewPosition(divId){
+	       //Get dimensions of div
+
+//	       var div = getElementById($(divId).attr('id'));
+//	       window.alert(div); 
+var overlap = 100;
+
+//window.alert(dh);
+	       var h = $(window).height()+overlap;
+               var w = $(window).width()+overlap;
+   
+    var nh = Math.floor(Math.random() * h);
+    var nw = Math.floor(Math.random() * w);
+    
+    return [nh-overlap,nw-overlap];    
+    
+}
+
+function animateDiv(divId){
+    var newq = makeNewPosition();
+    var oldq = $(divId).offset();
+    var speed = calcSpeed([oldq.top, oldq.left], newq);
+    
+    $(divId).animate({ top: newq[0], left: newq[1] }, speed, function(){
+      animateDiv(divId);        
+    });
+    
+};
+
+
+
+function calcSpeed(prev, next) {
+    
+    var x = Math.abs(prev[1] - next[1]);
+    var y = Math.abs(prev[0] - next[0]);
+    
+    var greatest = x > y ? x : y;
+    
+    var speedModifier = 0.1;
+
+    var speed = Math.ceil(greatest/speedModifier);
+
+    return speed;
+
+}
+
+
+
+
+
+
+function makeDiv (id,text,divclass) {
+    var newDiv = document.createElement('div');
+	       newDiv.id=sanitizeText(id);
+	       var textSpan = document.createElement('span')
+textSpan.innerHTML = text;	       
+//    var newText = document.createTextNode(text);
+    newDiv.appendChild(textSpan);
+	       document.body.appendChild(newDiv);
+       	      $(newDiv).addClass(sanitizeText(divclass));
+
+    return newDiv;
+}
+
+
+</script>
+
+
+
+
+
+</head>
+<body>
+
+
+
+
+
+
+</body>
+</html>

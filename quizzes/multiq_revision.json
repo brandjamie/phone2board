@@ -1,0 +1,79 @@
+{
+    "quiztype" : "multiq",
+    "notes": "Clientside questions on mixed tenses.",
+    "questionarray": [
+	{"instructions":"Write the comparative form of the adjective",
+	 "numNeeded":7,
+	 "resetOnMistake":1,
+	 "clearAnswer":false,
+	 "qarray":["good","bad","far","big","tall","interesting","beautiful","friendly","pretty","large","fast","clean","dirty","crazy","confusing"],
+	 "aarray":["better","worse","farther/further","bigger","taller","more interesting","more beautiful","friendlier/more friendly","prettier/more pretty","larger","faster","cleaner","dirtier","crazier","more confusing"]},
+	{"instructions":"Write the superlative form of the adjective",
+	 "numNeeded":7,
+	 "resetOnMistake":1,
+	 "clearAnswer":false,
+	 "qarray":["good","bad","far","big","tall","interesting","beautiful","friendly","pretty","large","fast","clean","dirty","crazy","confusing"],
+	 "aarray":["the best","the worst","the farthest/the furthest","the biggest","the tallest","the most interesting","the most beautiful","the friendliest/the most friendly","the prettiest/the most pretty","the largest","the fastest","the cleanest","the dirtiest","the craziest","the most confusing"]},
+
+	{"instructions":"Use the comparative or superlative to fill the blanks.",
+	 "numNeeded":7,
+	 "resetOnMistake":1,
+	 "clearAnswer":0,
+	 "qarray":["My brother's room is _______________ (tidy) mine.","Australia is _________________ (big) England.","I feel _______________ (good) yesterday.","He thinks Chinese is ______________(difficult) language in the world","Valencia played _________________(bad) Real Madrid yesterday.","Cats are not ____________________ (intelligent) as dogs.","Show me ____________________ (good) restaurant downtown.","________________ (hot) desert of all is the Sahara and it's in Africa.","Who is ________________(talkative) person in your family?"],
+	 "aarray":["tidier than","bigger than","better than","the most difficult","worse than","as intelligent","the best","The hottest/the hottest","the most talkative"]},
+	
+
+	{"instructions":"Fill the blank with the correct form of the verb.",
+	 "numNeeded":5,
+	 "resetOnMistake":0,
+	 "clearAnswer":0,
+	 "qarray":["This _______ (be) Mark.","He _______ (wear) a t-shirt and shorts today.","Mark _______ (like) fruits and vegetables. ","Sue _______ (eat) a banana at the moment. ","Sue ________ (eat) some fruit everyday. ","Look, Jenny and Jill ________ (go) to school. ","Jenny and Jill usually _______ (cycle) to school. ","The weather is good today. It __________ (not rain).","What ___________(they do) tomorrow?","What ___________ (they do) on Tuesdays?","What ___________(they do) yesterday?","We _______(have) a test last week.","She ______ (not go) to Muscat two days ago."],
+	 "aarray":["is","is wearing","likes","is eating","eats","are going","cycle","isn't raining/is not raining","are they doing","do they do","did they do","had","did not go"]},
+
+
+
+	{"instructions":"Change the sentence to passive",
+	 "numNeeded":5,
+	 "resetOnMistake":0,
+	 "clearAnswer":0,
+	 "qarray":["The teacher taught English",
+		   "The boys eat pizza",
+		   "John has cleaned the car.",
+		   "Sue drove the car.",
+		   "They are watering the plants."],
+	 "aarray":["English was taught./English was taught by the teacher",
+		   "Pizza is eaten./Pizza is eaten by the boys.",
+		   "The car has been cleaned./The car has been cleaned by John.",
+		   "The car was driven by Sue./The car was driven.",
+		   "The plants are being watered./The plants are being watered by them."]
+	},
+	{"instructions":"Complete the sentence",
+	 "numNeeded":5,
+	 "resetOnMistake":0,
+	 "clearAnswer":0,
+	 "qarray":["The shop __________(rob) at least three times since the beginning of the year.",
+		   "Every year natural disasters ___________(cause) terrible damage to the world.",
+		   "This law ___________(change) by the government last month.",
+		   "My friend ___________(offer) a promotion three times but prefers her present job.",
+		   "This type of thing _____________(do) by our workers all the time.",
+		   "The secretary _____________(organize) the last manager's meeting."],
+	 "aarray":["has been robbed",
+		   "cause",
+		   "was changed",
+		   "has been offered/was offered",
+		   "is done",
+		   "organized"]
+	},
+
+	{"instructions":"Put the words in the correct order.",
+	 "numNeeded":4,
+	 "resetOnMistake":0,
+	 "clearAnswer":0,
+	 "qarray":["elephant / mouse / bigger / is / than / An / a / .","in / world / the / river / Amazon / The / is / longest / river / the / .","older / father / mother / my / My / is / than / .","today / Lady / craziest / celebrity / Gaga / the / is /.","plane / a / car / Is / faster / a / than / ?"],
+	 "aarray":["An elephant is bigger than a mouse.","The Amazon is the longest river in the world.","My father is older than my mother./My mother is older than my father.","Lady Gaga is the craziest celebrity today.","Is a plane faster than a car?/Is a car faster than a plane?"]}
+
+
+	
+    ]
+  
+}

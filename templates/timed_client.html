@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width" />
+
+  <link rel="stylesheet" type="text/css" href="{{ static_url("gameshow.css")}}" /> 
+
+
+
+<script src="{{static_url("jquery-1.11.0.min.js")}}" type ="text/javascript"></script>
+
+<script src="{{static_url("jquery-migrate-1.2.1.min.js")}}" type ="text/javascript"></script>
+<script src="{{static_url("howler.min.js")}}" type ="text/javascript"></script>
+
+
+<script src="{{static_url("gameshow.js")}}"x type ="text/javascript"></script>
+
+<script type="text/javascript">
+{% autoescape None %}
+
+
+$(document).ready(function() { 
+  if ("{{ status }}"!="waitingforstart") {
+  questiongiven("{{ questiontype }}");
+  }
+  setTimeout(requestUpdate, 100); 
+} );
+
+// oneattempt is a boolean to change the behaivour on marking
+// if true, the result screen (correct) or (incorrect) will show until the next question
+// if false, the result screen should time out after a couple of seconds (code to be added later). 
+var intervaltimer;
+var oneattempt = true;
+var updatefunc = updateClient;
+var updatepage = "/clientstatus";
+var correct_sound = new Howl({
+  urls: ['{{static_url("audio/correct.mp3")}}', '{{static_url("audio/correct.ogg")}}']
+});
+
+var incorrect_sound = new Howl({
+  urls: ['{{static_url("audio/incorrect.mp3")}}', '{{static_url("audio/incorrect.ogg")}}']
+});
+
+
+var time = {{ time }};
+
+function updateClient(resultJson) {
+           if (resultJson.type=="questionasked"){
+               questiongiven(resultJson.qtype);
+               clearpreviousanswer();
+}
+if (resultJson.type=="time"){
+timechanged(resultJson.time);
+       }
+
+if  (resultJson.type=="mark"){
+
+               if (resultJson.markeduser=="{{ user }}") {
+if (resultJson.mark=="correct") {
+
+markcorrect();
+//window.correct_sound.play();
+
+//                       document.getElementById('correct').play(); 
+                      }
+                      if (resultJson.mark=="incorrect") { 
+//window.incorrect_sound.play();
+//                     document.getElementById('incorrect').play();
+markincorrect();
+                      }
+                
+                 } 
+}
+
+if (resultJson.type=="alluseranswers") {
+
+checkanswers(resultJson.answers);
+
+}
+
+}
+
+timechanged = function (newtime) {
+time = newtime;
+}
+
+
+
+
+function checkanswers () {
+answers = arguments[0];
+for (i in answers) {
+if (answers[i][0]=="{{ user }}") {
+if (answers[i][3]=="correct") {
+markcorrect();
+}
+else
+{
+markincorrect();
+}
+}
+
+}
+
+
+}
+
+
+function markcorrect() {
+showdiv("correct")
+hidediv("timeup")
+hidediv("incorrect")
+window.correct_sound.play();
+
+
+}
+
+function markincorrect() {
+window.incorrect_sound.play();
+showdiv("incorrect")
+hidediv("timeup")
+hidediv("correct")
+
+
+}
+
+
+
+function clearpreviousanswer (){
+document.getElementById('form').reset();
+
+}
+
+function questiongiven(qtype) {
+startTimer();
+  if (qtype == "open") {
+  getopenanswer();
+  }
+ }
+
+
+
+
+
+startTimer = function () {
+timer = time*1000;
+clearInterval(intervaltimer);
+    intervaltimer = setInterval(endTimer,timer);
+}
+
+
+endTimer = function () {
+clearInterval(intervaltimer);
+showdiv("timeup")
+sendanswer()
+}
+
+
+function getopenanswer() {
+hidediv("message");
+hidediv("correct");
+hidediv("incorrect");
+hidediv("timeup");
+showdiv("answerbox");
+}
+
+
+
+function sendanswer() {
+var answer = document.getElementById('name').value;
+answer = encodeURIComponent(answer);
+sendmessage("type=answer&answer="+answer,"/clientmessage");
+}
+
+</script>
+
+
+
+
+
+</head>
+<body>
+
+
+
+<div id="title" class="title" style="margin-bottom:0em;">
+ESL Review
+</div>
+
+
+<div id="message" class="box">
+<p>Hello, {{ user }}. Welcome to the quiz. </p>
+<p>Waiting for first question.</p>
+</div>
+
+<div id ="answerbox" style="display:none;">
+<form id="form" action="" class="inputform" onsubmit="return false;">
+<input type="text" name="answer" id="name" placeholder="Answer here" autocomplete="off" tabindex="1" class="txtinput">
+</form>
+<a href="javascript:sendanswer();">
+<div id="two" class="button1">
+Submit
+</div>
+</a>
+
+</div>
+
+<div id="correct" style="display:none;">
+<br>
+&nbsp
+Well done!
+
+</div>
+
+<div id="timeup" style="display:none;">
+<br>
+&nbsp
+Times up!
+
+</div>
+
+
+<div id="incorrect" style="display:none;">
+<br>
+&nbsp
+Wrong. 
+
+</div>
+
+
+
+
+
+<audio id="correct" src="{{static_url("audio/correct.mp3")}}" type="audio/mpeg" preload="auto"></audio>
+<audio id="incorrect" src="{{static_url("audio/incorrect.mp3")}}" type="audio/mpeg" preload="auto"></audio>
+
+
+
+
+
+</body>
+</html>

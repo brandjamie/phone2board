@@ -1,0 +1,40 @@
+{
+    "quiztype" : "fixed_answers",
+    "notes": "Complete the sentence using the present simple.",
+  "questionarray": [
+  "The boy ______(study) English.",
+  "Salwa and Maryam ______(be) hungry.",
+  "Evie ______(do) her homework.",
+  "My cousins _______(work) in Lulu.",
+  "His wife _______(enjoy) cooking.",
+  "_____ the girls students?",
+  "_____ you tired?",
+  "_____ it Thursday today?",
+  "_____ you like Pizza?",
+  "_____ your sister go to university?",
+  "_____ this bus stop at Carrefour?",
+  "_____ I late?",
+  "______ do you live? - In Nizwa",
+  "______ pen is this? - His",
+  "______ does this class finish? - 1:40",
+  "______ time does this class finish? - 1:40"],
+  "answerarray": [
+   "studies",
+  "are",
+  "does",
+  "work",
+  "enjoys",
+  "Are",
+  "Are",
+  "Is",
+  "Do",
+  "Does",
+  "Does",
+  "Am",
+  "Where",
+  "Whose",
+  "What",
+  "When"
+  ]
+  
+}

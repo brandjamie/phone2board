@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ESL Quiz
+</title>
+   <link rel="stylesheet" type="text/css" href="{{ static_url("gameshow.css")}}" /> 
+
+
+
+    <style type="text/css">
+
+#timer {
+    width:100%;
+	height:100%;
+    text-align:center;
+    font-size:80px;
+
+}
+</style>
+
+
+<script src="{{static_url("gameshow.js")}}" type ="text/javascript"></script>
+
+<script src="{{static_url("howler.min.js")}}" type ="text/javascript"></script>
+
+
+
+<script src="{{static_url("jquery-1.11.0.min.js")}}" type ="text/javascript"></script>
+
+
+<script src="{{static_url("jquery-migrate-1.2.1.min.js")}}" type ="text/javascript"></script>
+
+
+
+
+
+
+    <script type="text/javascript">
+
+{% autoescape None %}
+  $(document).ready(function() { 
+
+      var teams ={{ teams  }}
+      maketeamlist(teams);
+      var answerarray = [ {{ answers }} ];
+      if ("{{ status }}"!="waitingforstart") {
+	  questiongiven("{{ question }}");
+	  makeanswerdivs(answerarray);
+      }
+
+      document.session = $('#session').val(); 
+      setTimeout(requestUpdate, 100); 
+  } );
+
+
+
+var updatefunc = updateGlobal;
+var updatepage = "/globalstatus";
+var timeinterval;
+
+var time = {{ time }};
+var mytimer;
+  
+var tick_sound = new Howl({
+urls: ['{{static_url("audio/switch16.mp3")}}','{{static_url("audio/switch16.ogg")}}']
+});
+
+var tock_sound = new Howl({
+urls: ['{{static_url("audio/switch15.mp3")}}','{{static_url("audio/switch15.ogg")}}']
+});
+
+var start_sound = new Howl({
+urls: ['{{static_url("audio/jingles_STEEL15.mp3")}}','{{static_url("audio/jingles_STEEL15.ogg")}}']
+});
+
+var end_sound = new Howl({
+urls: ['{{static_url("audio/jingles_STEEL10.mp3")}}','{{static_url("audio/jingles_STEEL10.ogg")}}']
+});
+
+
+
+
+function updateGlobal(resultJson) {
+       if (resultJson.type=="users"){
+       maketeamlist(resultJson.users); 
+       }
+       if (resultJson.type=="question"){
+       questiongiven(resultJson.question);
+}
+if (resultJson.type=="time"){
+       timechanged(resultJson.time);
+       }
+    
+       if (resultJson.type=="answers") {
+       answerarray = resultJson.answers;
+       makeanswerdivs(resultJson.answers);
+       }
+}
+
+	     
+timechanged = function (newtime) {
+time = newtime;
+}
+
+
+questiongiven = function (question){
+       hidediv("teams");
+       showdiv("question");
+writediv("question","&nbsp;&nbsp;&nbsp;&nbsp;"+question);
+startTimer();
+//makeanswerdivs([]);
+}
+
+
+startTimer = function () {
+timer = time;
+	clearInterval(timeinterval)
+timeinterval = setInterval(updateClock,1000);
+    showdiv("timer")
+makeanswerdivs([]);
+    hidediv("answers")
+ window.start_sound.play();
+	      
+}
+
+
+updateClock = function () {
+    if (timer <=0) {
+	clearInterval(timeinterval)
+ window.end_sound.play();
+
+	hidediv("timer");
+	showdiv("answers");
+    }
+    else
+    {
+	timer = timer - 1;
+	var clock = document.getElementById("timer");
+	clock.innerHTML = timer;
+	if (timer % 2 == 0) {
+	    window.tick_sound.play();}
+	    else {
+	    window.tock_sound.play();}
+
+	}
+
+    }
+
+
+
+
+
+
+
+makeanswerdivs = function () {
+var answers = arguments[0];
+var divscript = "";
+for (i = 0; i<(answers.length); i++) { 
+	var answer = answers[i];
+	if (answer[4] == "false") {
+		if (answer[3] == "correct") {
+			divscript = divscript + "<div id='"+answer[0]+"' class='correctbox'><div class='teamname'>";
+			divscript = divscript + answer[0]+" : </div><div class='answer'>"+answer[1]+"</div></div>";
+		}
+		else if (answer[3] == "incorrect") 
+		{
+			divscript = divscript + "<div id='"+answer[0]+"' class='incorrectbox'><div class='teamname'>";
+			divscript = divscript + answer[0]+" : </div><div class='answer'>"+answer[1]+"</div></div>";
+		} 
+			else
+		{
+			divscript = divscript + "<div id='"+answer[0]+"' class='answerbox'><div class='teamname'>";
+			divscript = divscript + answer[0]+" : </div><div class='answer'>"+answer[1]+"</div></div>";
+		} 
+	}
+}
+writediv("answers",divscript);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+
+
+
+
+
+</head>
+
+<body>
+<div id="title" class="title">Elementary Review</div>
+
+<div id="teams" class="box">
+<p>
+Waiting for teams to join the quiz. 
+</p>
+<ul id="teamlist">
+
+</ul>
+
+</div>
+<div id="question" style="display:none;" class="box">
+</div>
+<div id="timer" style="display:none;" class="timer">
+  </div>
+<div id="answers">
+
+
+</div>
+</body>
+</html>

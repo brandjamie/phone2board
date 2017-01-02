@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width" />
+
+  <link rel="stylesheet" type="text/css" href="{{ static_url("gameshow.css")}}" /> 
+
+
+
+<script src="{{static_url("jquery-1.11.0.min.js")}}" type ="text/javascript"></script>
+<script src="{{static_url("clientquestions.js")}}" type ="text/javascript"></script>
+
+<script src="{{static_url("jquery-migrate-1.2.1.min.js")}}" type ="text/javascript"></script>
+<script src="{{static_url("howler.min.js")}}" type ="text/javascript"></script>
+
+
+<script src="{{static_url("gameshow.js")}}" type ="text/javascript"></script>
+
+<script type="text/javascript">
+{% autoescape None %}
+
+
+$(document).ready(function() {
+hidediv("correctbox");
+hidediv("finished");
+hidediv("levelup");
+hidediv("incorrectbox");
+if ("{{ status }}"!="waitingforstart") {
+
+questiongiven("{{ questiontype }}");
+}
+setTimeout(requestUpdate, 100);
+
+} );
+
+// oneattempt is a boolean to change the behaivour on marking
+// if true, the result screen (correct) or (incorrect) will show until the next question
+// if false, the result screen should time out after a couple of seconds (code to be added later). 
+var levels = {{ levels }}
+var True = true;
+var False = false;
+
+var updatefunc = updateClient;
+var updatepage = "/clientstatus";
+var correct_sound = new Howl({
+  urls: ['{{static_url("audio/correct.mp3")}}', '{{static_url("audio/correct.ogg")}}']
+});
+
+var incorrect_sound = new Howl({
+  urls: ['{{static_url("audio/incorrect.mp3")}}', '{{static_url("audio/incorrect.ogg")}}']
+});
+
+
+function updateClient(resultJson) {
+if (resultJson.type=="questionasked"){
+clearpreviousanswer();
+hidediv("message");
+hidediv("correctbox");
+hidediv("incorrectbox");
+questiongiven(resultJson.qtype);
+}
+if  (resultJson.type=="mark"){
+
+               if (resultJson.markeduser=="{{ user }}") {
+if (resultJson.mark=="correct") {
+markcorrect();
+}
+if (resultJson.mark=="incorrect") { 
+markincorrect();
+}
+                
+}
+}
+
+if (resultJson.type=="reset") {
+resetAll();
+getnextquestion();
+updateGlobal();
+}
+
+
+
+if (resultJson.type=="alluseranswers") {
+checkanswers(resultJson.answers);
+}
+
+}
+
+function updateGlobal () {
+var qnum = numNeeded - currentNeeded;
+sendmessage("type=clientmarked&level="+currentlevel+"&qnum="+qnum+"&finished="+finbool,"/clientmessage");
+} 
+
+
+
+function checkanswers () {
+answers = arguments[0];
+for (i in answers) {
+if (answers[i][0]=="{{ user }}") {
+if (answers[i][3]=="correct") {
+markcorrect();
+}
+else
+{
+markincorrect();
+}
+}
+
+}
+
+
+}
+
+
+function markcorrect() {
+window.correct_sound.play();
+writediv("cleft",currentNeeded+" questions to the next level."); 
+showdiv("correctbox");
+setCookies();
+updateGlobal();
+}
+
+function markincorrect() {
+window.incorrect_sound.play();
+writediv("ileft",currentNeeded+" questions to the next level."); 
+showdiv("incorrectbox");
+setCookies();
+updateGlobal();
+
+}
+
+
+
+function clearpreviousanswer (){
+document.getElementById('form').reset();
+}
+
+function questiongiven(qtype) {
+getCookies();
+if (initialised == false) {
+init();
+}
+
+showdiv("answerbox");
+nextQuestion();
+writeQuestion();
+ 
+}
+
+		      
+
+function getnextquestion() {
+hidediv("correctbox");
+hidediv("incorrectbox");
+hidediv("levelup");
+clearpreviousanswer();
+nextQuestion();
+writeQuestion();
+}
+
+function tryagain() {
+if (clearAnswer==true) {
+clearpreviousanswer();
+}
+hidediv("correctbox");
+hidediv("incorrectbox");
+}
+
+
+
+
+writeQuestion = function () {
+writediv("title",currentQInstructions);
+showdiv("message");
+writediv("message",currentQString);
+
+}
+
+
+
+function sendanswer() {
+var answer = document.getElementById('name').value;
+if (checkAnswer(answer)==true) {
+
+currentNeeded = currentNeeded-1;
+if (currentNeeded <= 0) {
+levelUp();
+}
+else {
+markcorrect();
+}
+}
+else {
+if (resetOnMistake==true) {
+currentNeeded = numNeeded;
+
+}
+
+markincorrect();
+}
+}
+
+function retry() {
+showdiv("answerbox");
+}
+
+levelUp = function () {
+if ((currentlevel+1)<numoflevels) {
+		    currentlevel = currentlevel+1;
+		    init();
+		    window.correct_sound.play();
+		    writediv("levnum","Next Level: "+currentlevel);
+showdiv("levelup");
+		    }
+		    else
+
+		    {
+quizComplete();
+
+		    }
+
+		    setCookies();
+		    updateGlobal();
+}
+
+
+
+
+		     quizComplete = function () {
+		     finbool = "true";
+		    window.correct_sound.play();
+		    showdiv("finished");
+
+		    }
+
+
+
+
+
+		    
+</script>
+
+
+
+
+
+</head>
+<body>
+
+
+
+<div id="title" class="title" style="margin-bottom:0em;">
+ESL Review
+</div>
+
+
+<div id="message" class="box">
+<p>Hello, {{ user }}. Welcome to the quiz. </p>
+<p>Waiting for first question.</p>
+</div>
+
+<div id ="answerbox" style="display:none;">
+<form id="form" action="" class="inputform" onsubmit="return false;">
+<input type="text" name="answer" id="name" placeholder="Answer here" autocomplete="off" tabindex="1" class="txtinput">
+</form>
+<a href="javascript:sendanswer();">
+<div id="two" class="button1">
+Submit
+</div>
+</a>
+
+
+
+
+
+
+
+
+
+
+</div>
+<audio id="correct" src="{{static_url("audio/correct.mp3")}}" type="audio/mpeg" preload="auto"></audio>
+<audio id="incorrect" src="{{static_url("audio/incorrect.mp3")}}" type="audio/mpeg" preload="auto"></audio>
+
+
+
+
+
+
+<a href="javascript:getnextquestion()">
+<div id="correctbox" class="correct" style="display:block; overflow:auto;">
+  <p>Well done, {{ user }}! </p>
+  <p>:)</p>
+  <div id="cleft"></div>
+  <p>Touch for next question</p>
+  </div>
+</a>
+
+<a href="javascript:tryagain()">
+<div id="incorrectbox" class="incorrect" style="display:block; overflow:auto;">
+  <p>Unlucky, {{ user }}! </p>
+  <p>:(</p>
+  <div id="ileft"></div>
+  <p>Touch to try again</p>
+  
+</div>
+</a>
+
+<a href="javascript:getnextquestion()">
+<div id="levelup" class="correct" style="display:block; overflow:auto;">
+  <p>:) :) :) :) :)</p>
+  <p>LEVEL UP</p>
+  <div id="levnum"></div>
+  <p>(: (: (: (: (:</p>
+  
+</div>
+</a>
+
+<a href="javascript:getnextquestion()">
+<div id="finished" class="correct" style="display:block; overflow:auto;">
+  <p>:) :) :) :) :)</p>
+  <p>WELL DONE</p>
+  <p>GOOD LUCK ON SUNDAY!</p>
+  <p></p>
+  <p>(: (: (: (: (:</p>
+  
+</div>
+</a>
+
+
+
+</body>
+</html>

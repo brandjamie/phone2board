@@ -1,0 +1,52 @@
+{
+    "quiztype" : "fixed_timed",
+    "notes": "Complete the sentence using the present simple.",
+    "questionarray": [
+	"A reporter speaks into a ________________",
+	"A __________ reports the news.",
+	"The last __________________ won the quiz show.",
+	"You must write a ___________ about one of the topics in the book.",
+	"He was feeling depressed so he went to see a ______________.",
+	"There is a ____________ noise coming from the back of the class.",
+	"If you smoke too much it will make you _________",
+	"The ____________ of a TV program decides how it is made.",
+	"Radio is one of many kinds of ___________.",
+	"You should read all of a news story, not just the __________.",
+	"A colon and a closing bracket can ____________ a smily face - :)",
+	"She had ___________ for dinner",
+	"It is important to __________ when you make a mistake.",
+	"He was very ____________ when he fell over.",
+	"I saw the new iphone on television in an ________________.",
+	"The river will ______ through the middle of the town.",
+	"You can find what is in a journal by reading the _____________.",
+	"The celebrity was very popular with the _________________ because she was very funny.",
+	"I went to an ___________________ about the history of Oman.",
+	"___________________ our teacher it is important that we practice vocabulary."
+    ],
+
+
+
+    "answerarray": [
+	"microphone/Microphone",
+	"journalist/Journalist",
+	"contestant/Contestant",
+	"report/Report",
+	"psychologist/Psychologist",
+	"constant/Constant",
+	"cough/Cough",
+	"media/Media",
+	"producer/Producer",
+	"headline/Headline",
+	"represent/Represent",
+	"lobster/Lobster",
+	"admit/Admit",
+	"embarressed/Embarressed",
+	"advertisement/Advertisement",	
+	"flow/Flow",
+	"contents/Contents",
+	"audience/Audience",
+	"exhibition/Exhibition",
+	"according to/According to"
+    ]
+  
+}

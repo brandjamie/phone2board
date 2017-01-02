@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ESL Quiz
+</title>
+   <link rel="stylesheet" type="text/css" href="{{ static_url("gameshow.css")}}" /> 
+
+<script src="{{static_url("gameshow.js")}}" type ="text/javascript"></script>
+
+
+
+
+<script src="{{static_url("jquery-1.11.0.min.js")}}" type ="text/javascript"></script>
+
+
+<script src="{{static_url("jquery-migrate-1.2.1.min.js")}}" type ="text/javascript"></script>
+
+<script type="text/javascript">
+
+{% autoescape None %}
+  $(document).ready(function() { 
+
+  var teams ={{ teams  }}
+  maketeamlist(teams);
+  var answerarray = [ {{ answers }} ];
+
+  if ("{{ status }}"!="waitingforstart") {
+     questiongiven("{{ question }}");
+
+     makeanswerdivs(answerarray);
+  }
+
+  document.session = $('#session').val(); 
+  setTimeout(requestUpdate, 100); 
+  } );
+
+
+
+ var updatefunc = updateGlobal;
+ var updatepage = "/globalstatus";
+
+
+
+
+
+
+
+function updateGlobal(resultJson) {
+  //     window.alert(resultJson.type);
+       if (resultJson.type=="users"){
+       maketeamlist(resultJson.users); 
+       }
+       if (resultJson.type=="question"){
+       questiongiven(resultJson.question);
+       }
+       if (resultJson.type=="answers") {
+       answerarray = resultJson.answers;
+       makeanswerdivs(resultJson.answers);
+       }
+}
+
+	     
+
+questiongiven = function (question){
+       hidediv("teams");
+       showdiv("question");
+       writediv("question","&nbsp;&nbsp;&nbsp;&nbsp;"+question);
+makeanswerdivs([]);
+}
+
+
+
+
+
+makeanswerdivs = function () {
+var answers = arguments[0];
+var divscript = "";
+for (i = 0; i<(answers.length); i++) { 
+	var answer = answers[i];
+	if (answer[4] == "false") {
+		if (answer[3] == "correct") {
+			divscript = divscript + "<div id='"+answer[0]+"' class='correctbox'><div class='teamname'>";
+			divscript = divscript + answer[0]+" : </div><div class='answer'>"+answer[1]+"</div></div>";
+		}
+		else if (answer[3] == "incorrect") 
+		{
+			divscript = divscript + "<div id='"+answer[0]+"' class='incorrectbox'><div class='teamname'>";
+			divscript = divscript + answer[0]+" : </div><div class='answer'>"+answer[1]+"</div></div>";
+		} 
+			else
+		{
+			divscript = divscript + "<div id='"+answer[0]+"' class='answerbox'><div class='teamname'>";
+			divscript = divscript + answer[0]+" : </div><div class='answer'>"+answer[1]+"</div></div>";
+		} 
+	}
+}
+writediv("answers",divscript);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+
+
+
+
+
+</head>
+
+<body>
+<div id="title" class="title">ESL Comparatives</div>
+
+<div id="teams" class="box">
+<p>
+Waiting for teams to join the quiz. 
+</p>
+<ul id="teamlist">
+
+</ul>
+
+</div>
+<div id="question" style="display:none;" class="box">
+</div>
+<div id="answers">
+
+
+</div>
+</body>
+</html>

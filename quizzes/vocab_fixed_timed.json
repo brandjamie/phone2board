@@ -1,0 +1,41 @@
+{
+    "quiztype" : "fixed_timed",
+    "notes": "Complete the sentence using the correct vocab word.",
+    "questionarray": [
+	"I wish I could play a musical  ________.",
+	"At the weekend I like to go ___________ in the sea.",
+	"At the weekend I like to go ___________ at the park.",
+	"At the weekend I like to play ____________.",
+	"At the weekend I like to do ____________.",
+	"I don't watch superhero movies for the ________.",
+	"If live in another country you will have to ________.",
+	"Have you got a _________ pen? Mine has run out of ink.",
+	"You should always consider other people's _______________.",
+	"When my friends go away I feel very ___________.",
+	"A lot of ________ movies have amazing special effects.",
+	"My wife is my closest _________________.",
+	"You should ___________ your family in your important decisions in life.",
+	"You must be ____________ if you want to succeed in life."
+	 ],
+
+
+
+    "answerarray": [
+	"instrument/Instrument",
+	"surfing/Surfing",
+	"jogging/Jogging",
+	"squash/Squash",
+	"aerobics/Aerobics",
+	"plot/Plot",
+	"adapt/Adapt",
+	"spare/Spare",
+	"point of view/Point of view",
+	"isolated/Isolated",
+	"recent/Recent",
+	"You must study hard if you want to _________ success in life.",
+	"companion/Companion",
+	"involve/Involve",
+	"determined/Determined"
+    ]
+  
+}
